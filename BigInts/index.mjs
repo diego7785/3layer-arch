@@ -12,6 +12,7 @@ const myObj = {
         test: 5n
       }
     },
+    melon: 'melon',
     myArray: [5, 50n]
 }
 
