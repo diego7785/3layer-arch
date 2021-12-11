@@ -1,0 +1,1 @@
+{"version":3,"file":"notificationFacebook.js","sourceRoot":"","sources":["../../src/notificationServices/notificationFacebook.ts"],"names":[],"mappings":";;;AAGA,MAAa,oBAAoB;IAC7B,MAAM,CAAC,OAAe,EAAE,IAAU;QAC9B,OAAO,CAAC,GAAG,CAAC,gCAAgC,GAAG,OAAO,GAAC,MAAM,GAAE,IAAI,CAAC,OAAO,EAAE,CAAC,CAAC;IACnF,CAAC;CACJ;AAJD,oDAIC"}
