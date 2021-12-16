@@ -1,20 +1,14 @@
-import express from 'express';
+import AppFactory from './AppFactory';
 import config from './config';
-import gameRouter from './routes/game';
-//import createPieces from './utils/createPieces';
-
-
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+import GameRouter from './routes/game';
+import BoardPiecesRouter from './routes/boardPieces';
 
 const PORT = config.port;
 const HOST = config.host;
 
-app.use('/', gameRouter);
+const app = new AppFactory();
 
-//(async() => await createPieces())();
+app.useRoute('/api/games', new GameRouter().routes());
+app.useRoute('/api/pieces', new BoardPiecesRouter().routes());
 
-app.listen(PORT, () => {
-    console.log(`Server listening on  http://${HOST}:${PORT}`);
-});
+app.startServer(HOST, PORT);

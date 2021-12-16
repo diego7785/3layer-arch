@@ -1,57 +1,75 @@
-import express from 'express';
-import * as gameService from '../databaseService/gameService';
-import { connect, disconnect } from '../databaseService/connection';
+import express from "express";
+import GameService from "../databaseService/gameService";
+import { connect, disconnect } from "../databaseService/connection";
+import Game from "./interfaces/game.interface";
 
-const router = express.Router();
+export default class GameRouter {
+  private router: express.Router;
+  private gameService: GameService;
 
-router.get('/', async (req, res) => {
-    try {
-        await connect()
-        res.status(200).send(await gameService.getGames());
-        await disconnect();    
-    } catch(err) {
-        console.log(err);
-        res.status(500).send('Internal server error');
-    }
-});
+  constructor() {
+    this.router = express.Router();
+    this.gameService = new GameService();
+  }
 
-router.get('/:id', async(req, res) => {
-    try {   
+  routes(): express.Router {
+    this.router.get("/", async (req, res) => {
+      try {
         await connect();
-        const game = await gameService.getGame(req.params.id);
-        if(game) {
-            res.status(200).send(game);
+        res.status(200).send(await this.gameService.getGames());
+        await disconnect();
+      } catch (err) {
+        console.log(err);
+        res.status(500).send("Internal server error");
+      }
+    });
+
+    this.router.get("/:id", async (req, res) => {
+      try {
+        await connect();
+        const game = await this.gameService.getGame(req.params.id);
+        if (game) {
+          res.status(200).send(game);
         } else {
-            res.status(404).send('Game not found');
+          res.status(404).send("Game not found");
         }
         await disconnect();
-    } catch(err){
+      } catch (err) {
         console.log(err);
-        res.status(500).send('Internal server error');
-    }
-});
+        res.status(500).send("Internal server error");
+      }
+    });
 
-router.post('/', async (req, res) => {
-    try {
-        await connect()
-        res.status(200).send(await gameService.createGame(req.body.name));
-        await disconnect();
-    } catch(err) {
+    this.router.post("/", async (req, res) => {
+      try {
+        if ((req.body as Game).name) {
+          await connect();
+          res
+            .status(201)
+            .send(await this.gameService.createGame(req.body.name));
+          await disconnect();
+        } else {
+          res
+            .status(400)
+            .send("Invalid request, missing name argument in body");
+        }
+      } catch (err) {
         console.log(err);
-        res.status(500).send('Internal server error');
-    }
-});
+        res.status(500).send("Internal server error");
+      }
+    });
 
-router.delete('/:id', async(req, res) => {
-    try {
+    this.router.delete("/:id", async (req, res) => {
+      try {
         await connect();
-        res.status(200).send(await gameService.deleteGame(req.params.id));
+        res.status(200).send(await this.gameService.deleteGame(req.params.id));
         await disconnect();
-    } catch(err){
+      } catch (err) {
         console.log(err);
-        res.status(500).send('Internal server error');
-    }
-}); 
+        res.status(500).send("Internal server error");
+      }
+    });
 
-
-export default router;
+    return this.router;
+  }
+}

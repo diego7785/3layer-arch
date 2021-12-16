@@ -1,18 +1,51 @@
-export function createBoard(): Array<any>{
-    let board : Array<any> = [];
-    for(let i = 0; i < 8; i++){
-        board[i] = [];
-        for(let j = 0; j < 8; j++){
-            board[i][j] = null;
-        }
-    }
-    return board;
-}
+import piece from "../models/piece";
 
-export function setPieces(pieces: Array<any>){
-    let board = createBoard();
-    for(const pieceToSet of pieces){
-        
-        board[pieceToSet.position[0]][pieceToSet.position[1]] = pieceToSet;
+export default class Board {
+  private boardPositionX = 0;
+  private boardPositionY = 1;
+  private board: Array<any>;
+
+  constructor(private tableSize: number = 8) {
+    this.board = [];
+    for (let i = 0; i < this.tableSize; i++) {
+      this.board[i] = [];
+      for (let j = 0; j < this.tableSize; j++) {
+        this.board[i][j] = " ";
+      }
     }
+  }
+
+  getBoard(): Array<any> {
+    return this.board;
+  }
+
+  setPieces(pieces: Array<any>): Array<any> {
+    for (const pieceToSet of pieces) {
+      this.board[pieceToSet.position[this.boardPositionX]][
+        pieceToSet.position[this.boardPositionY]
+      ] = pieceToSet;
+    }
+
+    return this.board;
+  }
+
+  toString(board:Array<any>): string {
+    let friendlyBoard = "";
+    for (let i = 0; i < this.tableSize; i++) {
+      for (let j = 0; j < this.tableSize; j++) {
+        friendlyBoard += board[i][j] + " ";
+      }
+      friendlyBoard += "\n";
+    }
+    return friendlyBoard;
+  }
+
+  createSimplifiedBoard(piecesInBoard: Array<any>): any[] {
+    for (let i = 0; i < piecesInBoard.length; i++) {
+      this.board[piecesInBoard[i].position[this.boardPositionX]][
+        piecesInBoard[i].position[this.boardPositionY]
+      ] = piecesInBoard[i].color + piecesInBoard[i].name;
+    }
+    return this.board;
+  }
 }

@@ -202,7 +202,7 @@ const pieces = [
     },
 ]
 
-export default async function createPieces(){
+async function createPieces(){
     await connect();
     for(const piece of pieces){
         const newPiece = new Piece(piece);
@@ -211,3 +211,5 @@ export default async function createPieces(){
     await disconnect();
 }
 
+
+(async () => await createPieces())();
