@@ -7,10 +7,14 @@ export default class Board {
 
   constructor(private tableSize: number = 8) {
     this.board = [];
+    this.initializeBoard();
+  }
+
+  initializeBoard() {
     for (let i = 0; i < this.tableSize; i++) {
       this.board[i] = [];
       for (let j = 0; j < this.tableSize; j++) {
-        this.board[i][j] = " ";
+        this.board[i][j] = null;
       }
     }
   }
@@ -29,6 +33,7 @@ export default class Board {
     return this.board;
   }
 
+  /*
   toString(board:Array<any>): string {
     let friendlyBoard = "";
     for (let i = 0; i < this.tableSize; i++) {
@@ -39,12 +44,14 @@ export default class Board {
     }
     return friendlyBoard;
   }
+  */
 
-  createSimplifiedBoard(piecesInBoard: Array<any>): any[] {
+  renderPiecesInBoard(piecesInBoard: Array<any>): any[] {
+    this.initializeBoard();
     for (let i = 0; i < piecesInBoard.length; i++) {
       this.board[piecesInBoard[i].position[this.boardPositionX]][
         piecesInBoard[i].position[this.boardPositionY]
-      ] = piecesInBoard[i].color + piecesInBoard[i].name;
+      ] = piecesInBoard[i];
     }
     return this.board;
   }

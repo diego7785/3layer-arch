@@ -9,11 +9,11 @@ const GameSchema = new Schema({
     },
     status: {
         type: String,
-        default: 'N' // N, S, I, F (N - Not started, S - Started, I - In progress, F - Finished)) 
+        default: 'N' // N, I, F (N - Not started, S - Started, I - In progress, F - Finished)) 
     },
     turn: {
         type: String,
-        default: 'W'
+        default: 'White' // White, Black
     },
     check: {
         type: Boolean,

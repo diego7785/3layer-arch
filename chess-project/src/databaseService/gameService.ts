@@ -1,14 +1,11 @@
 import Game from "../models/game";
-import Board from "../controller/board";
-import BoardPieceService from "./boardPieceService";
+import BoardService from "./boardService";
+import CustomError from "../errors/customError";
 
-export default class GameService {
-  private board: Board;
-  private boardPieceService: BoardPieceService;
+export default class GameService extends BoardService{
 
   constructor() {
-    this.board = new Board();
-    this.boardPieceService = new BoardPieceService();
+    super();
   }
 
   async getGames(): Promise<any> {
@@ -20,37 +17,32 @@ export default class GameService {
     }
   }
 
-  async getGame(id: string): Promise<any> {
+  async createGame(name: string): Promise<any> {
     try {
-      const game = await Game.findById(id);
-      if (!game) {
-        return null;
-      }
-
-      const completeBoard = await this.boardPieceService.getPiecesByGame(id);
-      const simplifiedBoard = this.board.createSimplifiedBoard(
-        completeBoard
-      );
-
-      const gameWithBoard = {
-        game: game,
-        board: completeBoard,
-        simplifiedBoard: this.board.toString(simplifiedBoard),
-      };
-      return gameWithBoard;
+      const game = new Game({
+        name: name,
+      });
+      await this.createPieces(game);
+      return await game.save();
     } catch (err) {
       console.log(err);
       throw err;
     }
   }
 
-  async createGame(name: String): Promise<any> {
+  gameIsCheckMate(game: any): void {
+    if(game.game.checkMate){
+      throw new CustomError("Game is checkmate", 400);
+    }
+  }
+
+  async changeGameStatus(idGame: string, status: string): Promise<any> {
     try {
-      const game = new Game({
-        name: name,
-      });
-      await this.boardPieceService.createPieces(game);
-      return await game.save();
+      const game = await Game.findById(idGame);
+      if(game){
+        game.status = status;
+        await Game.findByIdAndUpdate(idGame, game);
+      }
     } catch (err) {
       console.log(err);
       throw err;

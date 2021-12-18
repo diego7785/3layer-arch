@@ -1,86 +1,51 @@
-import boardPiece from "../models/boardPiece";
-import PiecesService from "./pieceService";
 import CustomError from "../errors/customError";
+import PieceController from "../controller/piece";
+import GameService from "./gameService";
+import BoardService from './boardService';
+import BoardPiece from '../models/boardPiece';
+import Piece from '../models/piece';
 
+export default class BoardPieceService extends BoardService {
+  private pieceController: PieceController;
+  private gameService: GameService;
 
-export default class BoardPieceService {
-  private piecesService: PiecesService;
-
-  constructor(){
-    this.piecesService = new PiecesService();
+  constructor() {
+    super();
+    this.pieceController = new PieceController();
+    this.gameService = new GameService();
   }
 
-  async createPieces(pGame: any): Promise<typeof boardPiece[]> {
-    try {
-      const pieces = await this.piecesService.getPieces();
-      const returnPieces = [];
-      for(const piece of pieces){
-          const newBoardPiece = new boardPiece({
-              position: piece.position,
-              Game: pGame._id,
-              Piece: piece._id
-          });
-          returnPieces.push(newBoardPiece);
-          await newBoardPiece.save();
-      }
-      return returnPieces;
-    } catch(err){
-      console.log(err);
-      throw err;
-    }
-  }
-  
-  async getPiecesByGame(game: string): Promise<any[]> {
-    try {
-      const boardPieces = await boardPiece.find({Game: game});
-      const boardPiecesInfo = [];
-  
-      for(const piece of boardPieces){
-          const pieceInfo = await this.piecesService.getPiece(piece.Piece);
-          boardPiecesInfo.push({
-              name: pieceInfo.name,
-              color: pieceInfo.color,
-              moves: pieceInfo.moves,
-              position: piece.position,
-              _id: piece._id,
-              Game: piece.Game,
-              isAlive: piece.isAlive,
-              isFirstMove: piece.isFirstMove,
-              isPromoted: piece.isPromoted,
-              isCaptured: piece.isCaptured,
-              isPromotedTo: piece.isPromotedTo,
-              Piece: piece.Piece
-          });
-      }
-  
-      return boardPiecesInfo;
-    } catch(err){
-      console.log(err);
-      throw err;
-    }
-  }
-  
   async movePiece(idPiece: string, newPosition: Array<any>): Promise<any> {
     try {
-      const piece = await boardPiece.findById(idPiece);
-      if(!piece){
-          return null;
+      const piece = await BoardPiece.findById(idPiece);
+      if (!piece) {
+        return null;
       }
-      if(piece.isCaptured){
-        throw new CustomError('Piece is captured', 400);
-      } else if (!piece.isAlive){
-        throw new CustomError('Piece is dead', 400);
-      } else if(piece.isFirstMove){
-        piece.isFirstMove = false;
-      }
+      const boardAndGameInfo = await this.gameService.getBoardAndGameInfo(piece.Game);
+
+      this.gameService.gameIsCheckMate(boardAndGameInfo);
+
+      await this.gameService.changeGameStatus(piece.Game, 'I');
       
-      piece.position = newPosition;
-      await piece.save();
-      return piece;
-    } catch(err){
+      const idGenericPiece = await Piece.findById(piece.Piece);
+
+      const pieceIsAbleToBeMoved = this.pieceIsAbleToBeMoved(piece);
+
+      if(pieceIsAbleToBeMoved){
+        const isValidMove = this.pieceController.validateMove(idGenericPiece, newPosition, boardAndGameInfo);
+        if (isValidMove) {
+          piece.position = newPosition;
+          await BoardPiece.findByIdAndUpdate(idPiece, piece);
+          await this.switchTurn(piece.Game)
+          return piece;
+        } else {
+          throw new CustomError("Invalid move", 400);
+        }
+      }
+
+    } catch (err) {
       console.log(err);
       throw err;
     }
   }
 }
-

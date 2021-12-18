@@ -1,4 +1,5 @@
-import Mongoose from 'mongoose';
+//import Mongoose from 'mongoose';
+import * as Mongoose from 'mongoose';
 
 const Schema = Mongoose.Schema;
 

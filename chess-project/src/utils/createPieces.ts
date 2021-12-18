@@ -1,5 +1,14 @@
 import Piece from "../models/piece";
-import { connect, disconnect } from "../databaseService/connection";
+import * as mongoose from 'mongoose';
+
+
+export async function connect(): Promise<any> {
+    return await mongoose.connect("mongodb://localhost:27017/chess-game");
+}
+
+export async function disconnect(): Promise<void> {
+    return await mongoose.disconnect();
+}
 
 const pieces = [
     {

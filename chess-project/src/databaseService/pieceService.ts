@@ -1,8 +1,5 @@
 import piece from "../models/piece";
-
 export default class PiecesService {
-    constructor() {
-    }
 
     async getPieces(): Promise<any> {
         try{
