@@ -15,6 +15,20 @@ export default class BoardPieceService extends BoardPieceGameService {
     this.gameService = new GameService();
   }
 
+  pieceIsAbleToBeMoved(piece: any): boolean {
+    if (!piece.isAlive) {
+      throw new CustomError("Piece is dead", 400);
+    }  
+
+    return true;
+  }
+
+  changeUpdateIsFirstMove(piece: any){
+    if (piece.isFirstMove) {
+      piece.isFirstMove = false;
+    }
+  }
+
   async movePiece(idPiece: string, newPosition: Array<any>): Promise<any> {
     try {
       const piece = await BoardPiece.findById(idPiece);

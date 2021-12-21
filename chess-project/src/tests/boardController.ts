@@ -1,4 +1,5 @@
 import BoardController from '../controller/board';
+import BoardPieceGameService from '../databaseService/boardPieceGameService';
 
 describe('Testing Board Controller', () => {
     const board = [
@@ -29,8 +30,8 @@ describe('Testing Board Controller', () => {
     })
 
     it('Render pieces in board', () => {
-        const boardController = new BoardController();
-        const boardWithPieces = boardController.renderPiecesInBoard(pieces);
+        const boardPieceGameService = new BoardPieceGameService();
+        const boardWithPieces = boardPieceGameService.renderPiecesInBoard(pieces, board);
 
         let piecesRendered = 0;
         for(const piece of pieces){

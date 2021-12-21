@@ -9,11 +9,24 @@ export default class BoardPieceGameService {
   protected board: Board;
   protected piecesService: PiecesService;
   protected piece: Piece;
+  private boardPositionX = 0;
+  private boardPositionY = 1;
 
   constructor() {
     this.board = new Board();
     this.piecesService = new PiecesService();
     this.piece = new Piece();
+  }
+
+  renderPiecesInBoard(piecesInBoard: Array<any>, board: Array<any>): any[] {
+    for (const pieceToSet of piecesInBoard) {
+      if(pieceToSet.isAlive){
+        board[pieceToSet.position[this.boardPositionX]][
+          pieceToSet.position[this.boardPositionY]
+        ] = pieceToSet;
+      }
+    }
+    return board;
   }
 
   async getPiecesByGame(gameId: string): Promise<any[]> {
@@ -45,20 +58,6 @@ export default class BoardPieceGameService {
     }
   }
 
-  pieceIsAbleToBeMoved(piece: any): boolean {
-    if (!piece.isAlive) {
-      throw new CustomError("Piece is dead", 400);
-    }  
-
-    return true;
-  }
-
-  changeUpdateIsFirstMove(piece: any){
-    if (piece.isFirstMove) {
-      piece.isFirstMove = false;
-    }
-  }
-
   async getBoardAndGameInfo(gameId: string) {
     try {
       const game = await Game.findById(gameId);
@@ -67,8 +66,9 @@ export default class BoardPieceGameService {
       }
 
       const piecesInBoard = await this.getPiecesByGame(gameId);
-
-      const simplifiedBoard = this.board.renderPiecesInBoard(piecesInBoard);
+      
+      this.board.initializeBoard();
+      const simplifiedBoard = this.renderPiecesInBoard(piecesInBoard, this.board.getBoard());
 
       const gameWithBoard = {
         game: game,

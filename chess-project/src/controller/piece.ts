@@ -1,4 +1,6 @@
-export default class PieceController {
+import Piece from './piece.interface';
+
+export default class PieceController implements Piece{
   private boardSize = 8;
 
   validateRightTurn(piece: any, game: any): boolean {

@@ -1,6 +1,4 @@
 export default class Board {
-  private boardPositionX = 0;
-  private boardPositionY = 1;
   private board: Array<any>;
 
   constructor(private tableSize: number = 8) {
@@ -18,18 +16,6 @@ export default class Board {
   }
 
   getBoard(): Array<any> {
-    return this.board;
-  }
-
-  renderPiecesInBoard(piecesInBoard: Array<any>): any[] {
-    this.initializeBoard();
-    for (const pieceToSet of piecesInBoard) {
-      if(pieceToSet.isAlive){
-        this.board[pieceToSet.position[this.boardPositionX]][
-          pieceToSet.position[this.boardPositionY]
-        ] = pieceToSet;
-      }
-    }
     return this.board;
   }
 }
