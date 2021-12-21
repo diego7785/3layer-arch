@@ -39,11 +39,9 @@ export default class BoardPieceService extends BoardPieceGameService {
         const isRightTurn = this.pieceController.validateRightTurn(genericPiece, boardAndGameInfo);
         if (isRightTurn) {
           const validMoves = this.piece.getValidMoves(genericPiece, piece, boardAndGameInfo.board);
-          console.log('aaa',validMoves)
-          const movementInValidMoves = this.piece.newPositionIsInValidMoves(newPosition, validMoves);
-          console.log(movementInValidMoves)
           
-          //throw new CustomError("Testing", 400);
+          const movementInValidMoves = this.piece.newPositionIsInValidMoves(newPosition, validMoves);
+          
           if(movementInValidMoves){
             const newPositionKillsPiece = this.piece.newPositionCouldKillsPiece(newPosition, genericPiece.color, boardAndGameInfo.board);
             

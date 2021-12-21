@@ -54,7 +54,6 @@ export default class PieceController {
 
   getRightLeftMoves(
     positionInRow: number,
-    positionInColumn: number,
     board: Array<any>,
     availableMoves: Array<any>,
     i: number,
@@ -103,7 +102,6 @@ export default class PieceController {
       if (
         this.getRightLeftMoves(
           positionInRow,
-          positionInColumn,
           board,
           availableMoves,
           i,
@@ -119,7 +117,6 @@ export default class PieceController {
       if (
         this.getRightLeftMoves(
           positionInRow,
-          positionInColumn,
           board,
           availableMoves,
           i,
@@ -438,15 +435,11 @@ export default class PieceController {
             availableMoves,
             true
           );
-          console.log(piece);
+
           if (piece.isFirstMove) {
-            console.log("first move", availableMoves);
             availableMoves.splice(2, availableMoves.length);
-            console.log(availableMoves);
           } else {
-            console.log("no first move", availableMoves);
             availableMoves.splice(1, availableMoves.length);
-            console.log(availableMoves);
           }
         } else if (
           genericPiece.name === "Pawn" &&
@@ -459,15 +452,10 @@ export default class PieceController {
             availableMoves,
             true
           );
-          console.log(piece);
           if (piece.isFirstMove) {
-            console.log("first move", availableMoves);
             availableMoves.splice(2, availableMoves.length);
-            console.log(availableMoves);
           } else {
-            console.log("no first move", availableMoves);
             availableMoves.splice(1, availableMoves.length);
-            console.log(availableMoves);
           }
         } else {
           this.getAllFrontMoves(position, board, availableMoves);
@@ -477,7 +465,6 @@ export default class PieceController {
       } else if (move === "1D") {
         if (genericPiece.name === "Pawn") {
           this.get1DMoves(position, board, availableMoves, true);
-          console.log("1D", availableMoves);
         } else {
           this.get1DMoves(position, board, availableMoves, false);
         }

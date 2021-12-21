@@ -16,9 +16,9 @@ export default class BoardPieceGameService {
     this.piece = new Piece();
   }
 
-  async getPiecesByGame(game: string): Promise<any[]> {
+  async getPiecesByGame(gameId: string): Promise<any[]> {
     try {
-      const boardPieces = await BoardPiece.find({ Game: game });
+      const boardPieces = await BoardPiece.find({ Game: gameId });
       const boardPiecesAndPiecesInfo = [];
 
       for (const piece of boardPieces) {
@@ -59,14 +59,14 @@ export default class BoardPieceGameService {
     }
   }
 
-  async getBoardAndGameInfo(id: string) {
+  async getBoardAndGameInfo(gameId: string) {
     try {
-      const game = await Game.findById(id);
+      const game = await Game.findById(gameId);
       if (!game) {
         return null;
       }
 
-      const piecesInBoard = await this.getPiecesByGame(id);
+      const piecesInBoard = await this.getPiecesByGame(gameId);
 
       const simplifiedBoard = this.board.renderPiecesInBoard(piecesInBoard);
 
@@ -81,14 +81,14 @@ export default class BoardPieceGameService {
     }
   }
 
-  async createBoardPieces(pGame: any): Promise<typeof BoardPiece[]> {
+  async createBoardPieces(game: any): Promise<typeof BoardPiece[]> {
     try {
       const pieces = await this.piecesService.getPieces();
       const returnPieces = [];
       for (const piece of pieces) {
         const newBoardPiece = new BoardPiece({
           position: piece.position,
-          Game: pGame._id,
+          Game: game._id,
           Piece: piece._id,
         });
         returnPieces.push(newBoardPiece);
@@ -101,12 +101,12 @@ export default class BoardPieceGameService {
     }
   }
 
-  async switchTurn(id: string): Promise<any> {
+  async switchTurn(gameId: string): Promise<any> {
     try {
-      const game = await Game.findById(id);
+      const game = await Game.findById(gameId);
       if (game) {
         game.turn = game.turn === "White" ? "Black" : "White";
-        return await Game.findByIdAndUpdate(id, game);
+        return await Game.findByIdAndUpdate(gameId, game);
       }
       return null;
     } catch (err) {

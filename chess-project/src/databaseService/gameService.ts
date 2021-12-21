@@ -36,12 +36,12 @@ export default class GameService extends BoardPieceGameService {
     }
   }
 
-  async changeGameStatus(idGame: string, status: string): Promise<any> {
+  async changeGameStatus(gameId: string, status: string): Promise<any> {
     try {
-      const game = await Game.findById(idGame);
+      const game = await Game.findById(gameId);
       if(game){
         game.status = status;
-        await Game.findByIdAndUpdate(idGame, game);
+        await Game.findByIdAndUpdate(gameId, game);
       }
     } catch (err) {
       console.log(err);
@@ -49,9 +49,9 @@ export default class GameService extends BoardPieceGameService {
     }
   }
 
-  async deleteGame(id: string): Promise<any> {
+  async deleteGame(gameId: string): Promise<any> {
     try {
-      return await Game.findByIdAndRemove(id);
+      return await Game.findByIdAndRemove(gameId);
     } catch (err) {
       console.log(err);
       throw err;
