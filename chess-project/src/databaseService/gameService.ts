@@ -36,6 +36,12 @@ export default class GameService extends BoardPieceGameService {
     }
   }
 
+  gameIsOver(game: any): void {
+    if(game.game.status === 'F'){
+      throw new CustomError("Game is over", 400);
+    }
+  }
+
   async changeGameStatus(gameId: string, status: string): Promise<any> {
     try {
       const game = await Game.findById(gameId);

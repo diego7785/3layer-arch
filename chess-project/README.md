@@ -101,5 +101,6 @@ Not implemented:
 - Check
 - Checkmate
 - Promotion
+- End game
 
 

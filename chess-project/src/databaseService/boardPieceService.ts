@@ -41,6 +41,7 @@ export default class BoardPieceService extends BoardPieceGameService {
       }
 
       this.gameService.gameIsCheckMate(boardAndGameInfo);
+      this.gameService.gameIsOver(boardAndGameInfo);
 
       await this.gameService.changeGameStatus(piece.Game, 'I');
       
