@@ -15,18 +15,6 @@ const boardPieceSchema = new Schema({
         type: Boolean,
         default: true
     },
-    isPromoted: {
-        type: Boolean,
-        default: false
-    },
-    isCaptured: {
-        type: Boolean,
-        default: false
-    },
-    isPromotedTo: {
-        type: String,
-        default: false
-    },
     Game: {
         type: Schema.Types.ObjectId,
         ref: 'Game'

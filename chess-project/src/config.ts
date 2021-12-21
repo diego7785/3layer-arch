@@ -1,8 +1,6 @@
+import * as dotenv from "dotenv";
 
-
-console.log(process.env.PORT);
-require('dotenv').config();
-console.log(process.env.PORT);
+dotenv.config({path: "./.env"});
 
 
 const config = {

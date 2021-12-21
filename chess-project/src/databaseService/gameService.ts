@@ -1,8 +1,8 @@
 import Game from "../models/game";
-import BoardService from "./boardService";
+import BoardPieceGameService from "./boardPieceGameService";
 import CustomError from "../errors/customError";
 
-export default class GameService extends BoardService{
+export default class GameService extends BoardPieceGameService {
 
   constructor() {
     super();
@@ -22,7 +22,7 @@ export default class GameService extends BoardService{
       const game = new Game({
         name: name,
       });
-      await this.createPieces(game);
+      await this.createBoardPieces(game);
       return await game.save();
     } catch (err) {
       console.log(err);

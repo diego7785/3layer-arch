@@ -5,9 +5,10 @@
   "main": "index.ts",
   "scripts": {
     "dev": "nodemon --config nodemon.json src/index.ts",
-    "start": "tsc && node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "loadPieces": "tsc ./src/utils/createPieces && node dist/utils/createPieces.js"
+    "start": "tsc && node dist/src/index.js",
+    "test": "jest",
+    "loadPieces": "tsc ./src/utils/createPieces && node ./src/utils/createPieces.js",
+    "init-jest": "jest --init"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +22,12 @@
     "mongoose": "^6.1.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-typescript": "^7.16.5",
+    "@types/jest": "^27.0.3",
     "nodemon": "^2.0.15",
+    "ts-jest": "^27.1.2",
     "ts-node": "^10.4.0"
   }
 }

@@ -1,42 +1,44 @@
 import Game from "../models/game";
 import Board from "../controller/board";
+import Piece from "../controller/piece";
 import CustomError from "../errors/customError";
 import BoardPiece from "../models/boardPiece";
 import PiecesService from "./pieceService";
 
-export default class BoardService {
-  private board: Board;
+export default class BoardPieceGameService {
+  protected board: Board;
   protected piecesService: PiecesService;
+  protected piece: Piece;
 
   constructor() {
     this.board = new Board();
     this.piecesService = new PiecesService();
+    this.piece = new Piece();
   }
 
   async getPiecesByGame(game: string): Promise<any[]> {
     try {
       const boardPieces = await BoardPiece.find({ Game: game });
-      const boardPiecesInfo = [];
+      const boardPiecesAndPiecesInfo = [];
 
       for (const piece of boardPieces) {
-        const pieceInfo = await this.piecesService.getPiece(piece.Piece);
-        boardPiecesInfo.push({
-          name: pieceInfo.name,
-          color: pieceInfo.color,
-          moves: pieceInfo.moves,
+        const genericPieceInfo = await this.piecesService.getPiece(piece.Piece);
+        boardPiecesAndPiecesInfo.push({
+          name: genericPieceInfo.name,
+          color: genericPieceInfo.color,
+          moves: genericPieceInfo.moves,
           position: piece.position,
           _id: piece._id,
           Game: piece.Game,
           isAlive: piece.isAlive,
           isFirstMove: piece.isFirstMove,
           isPromoted: piece.isPromoted,
-          isCaptured: piece.isCaptured,
           isPromotedTo: piece.isPromotedTo,
           Piece: piece.Piece,
         });
       }
 
-      return boardPiecesInfo;
+      return boardPiecesAndPiecesInfo;
     } catch (err) {
       console.log(err);
       throw err;
@@ -44,15 +46,17 @@ export default class BoardService {
   }
 
   pieceIsAbleToBeMoved(piece: any): boolean {
-    if (piece.isCaptured) {
-      throw new CustomError("Piece is captured", 400);
-    } else if (!piece.isAlive) {
+    if (!piece.isAlive) {
       throw new CustomError("Piece is dead", 400);
-    } else if (piece.isFirstMove) {
-      piece.isFirstMove = false;
-    }
+    }  
 
     return true;
+  }
+
+  changeUpdateIsFirstMove(piece: any){
+    if (piece.isFirstMove) {
+      piece.isFirstMove = false;
+    }
   }
 
   async getBoardAndGameInfo(id: string) {
@@ -77,7 +81,7 @@ export default class BoardService {
     }
   }
 
-  async createPieces(pGame: any): Promise<typeof BoardPiece[]> {
+  async createBoardPieces(pGame: any): Promise<typeof BoardPiece[]> {
     try {
       const pieces = await this.piecesService.getPieces();
       const returnPieces = [];
@@ -97,15 +101,15 @@ export default class BoardService {
     }
   }
 
-  async switchTurn(id: string): Promise<any>{
+  async switchTurn(id: string): Promise<any> {
     try {
       const game = await Game.findById(id);
-      if(game){
+      if (game) {
         game.turn = game.turn === "White" ? "Black" : "White";
         return await Game.findByIdAndUpdate(id, game);
       }
       return null;
-    } catch(err){
+    } catch (err) {
       console.log(err);
       throw err;
     }

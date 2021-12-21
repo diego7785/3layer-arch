@@ -39,7 +39,7 @@ const pieces = [
         name: "King",
         color: "White",
         position: [0,4],
-        moves: ["1F"]
+        moves: ["1F", "1D"]
     },
     {
         name: "BBishop",
@@ -63,49 +63,49 @@ const pieces = [
         name: "Pawn",
         color: "White",
         position: [1,0],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "White",
         position: [1,1],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "White",
         position: [1,2],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "White",
         position: [1,3],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "White",
         position: [1,4],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "White",
         position: [1,5],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "White",
         position: [1,6],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "White",
         position: [1,7],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
 
 
@@ -165,49 +165,49 @@ const pieces = [
         name: "Pawn",
         color: "Black",
         position: [6,0],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "Black",
         position: [6,1],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "Black",
         position: [6,2],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "Black",
         position: [6,3],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "Black",
         position: [6,4],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "Black",
         position: [6,5],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "Black",
         position: [6,6],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
     {
         name: "Pawn",
         color: "Black",
         position: [6,7],
-        moves: ["F"]
+        moves: ["F", "1D"]
     },
 ]
 

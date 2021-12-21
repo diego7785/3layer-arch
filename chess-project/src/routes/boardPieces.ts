@@ -3,7 +3,6 @@ import { connect, disconnect } from "../databaseService/connection";
 import Movement from "./interfaces/movement.interface";
 import BoardPiece from "../databaseService/boardPieceService";
 import CustomError from "../errors/customError";
-import GameService from "../databaseService/gameService";
 
 export default class BoardPiecesRouter {
   private router: express.Router;

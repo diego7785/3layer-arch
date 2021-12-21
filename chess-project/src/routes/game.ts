@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express";
 import GameService from "../databaseService/gameService";
 import { connect, disconnect } from "../databaseService/connection";
-import Game from "./interfaces/game.interface";
 
 export default class GameRouter {
   private router: express.Router;

@@ -1,11 +1,11 @@
 import CustomError from "../errors/customError";
 import PieceController from "../controller/piece";
 import GameService from "./gameService";
-import BoardService from './boardService';
+import BoardPieceGameService from './boardPieceGameService';
 import BoardPiece from '../models/boardPiece';
 import Piece from '../models/piece';
 
-export default class BoardPieceService extends BoardService {
+export default class BoardPieceService extends BoardPieceGameService {
   private pieceController: PieceController;
   private gameService: GameService;
 
@@ -22,24 +22,49 @@ export default class BoardPieceService extends BoardService {
         return null;
       }
       const boardAndGameInfo = await this.gameService.getBoardAndGameInfo(piece.Game);
+      if(!boardAndGameInfo){
+        throw new CustomError("Game not found", 400);
+      }
 
       this.gameService.gameIsCheckMate(boardAndGameInfo);
 
       await this.gameService.changeGameStatus(piece.Game, 'I');
       
-      const idGenericPiece = await Piece.findById(piece.Piece);
+      const genericPiece = await Piece.findById(piece.Piece);
 
       const pieceIsAbleToBeMoved = this.pieceIsAbleToBeMoved(piece);
 
+      
       if(pieceIsAbleToBeMoved){
-        const isValidMove = this.pieceController.validateMove(idGenericPiece, newPosition, boardAndGameInfo);
-        if (isValidMove) {
-          piece.position = newPosition;
-          await BoardPiece.findByIdAndUpdate(idPiece, piece);
-          await this.switchTurn(piece.Game)
-          return piece;
+        const isRightTurn = this.pieceController.validateRightTurn(genericPiece, boardAndGameInfo);
+        if (isRightTurn) {
+          const validMoves = this.piece.getValidMoves(genericPiece, piece, boardAndGameInfo.board);
+          console.log('aaa',validMoves)
+          const movementInValidMoves = this.piece.newPositionIsInValidMoves(newPosition, validMoves);
+          console.log(movementInValidMoves)
+          
+          //throw new CustomError("Testing", 400);
+          if(movementInValidMoves){
+            const newPositionKillsPiece = this.piece.newPositionCouldKillsPiece(newPosition, genericPiece.color, boardAndGameInfo.board);
+            
+            if(newPositionKillsPiece === 'kill'){
+              await this.piece.killPiece(newPosition, boardAndGameInfo.board, BoardPiece);
+            } else if (newPositionKillsPiece === 'sameColor'){
+              throw new CustomError("New position is not valid", 400);
+            }
+            
+            //throw new CustomError("Testing", 400);
+            piece.position = newPosition;
+            this.changeUpdateIsFirstMove(piece);
+            await BoardPiece.findByIdAndUpdate(idPiece, piece);
+            await this.switchTurn(piece.Game)
+            return piece;
+          }
+
+          throw new CustomError("Invalid move", 400); 
+
         } else {
-          throw new CustomError("Invalid move", 400);
+          throw new CustomError("Is not your turn", 400);
         }
       }
 
