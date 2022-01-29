@@ -66,7 +66,6 @@ export default class BoardPieceService extends BoardPieceGameService {
               throw new CustomError("New position is not valid", 400);
             }
             
-            //throw new CustomError("Testing", 400);
             piece.position = newPosition;
             this.changeUpdateIsFirstMove(piece);
             await BoardPiece.findByIdAndUpdate(idPiece, piece);
