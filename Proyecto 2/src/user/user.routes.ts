@@ -12,7 +12,9 @@ export default class UserRoutes {
   }
 
   async createUser(req: Request, res: Response): Promise<void> {
+    console.log(req.body.name, req.body.nickname);
     const { name, nickname } = req.body;
+    console.log(name,nickname)
     const user = new User();
     user.name = name;
     user.nickname = nickname;
@@ -21,56 +23,59 @@ export default class UserRoutes {
   }
 
   async getAllUsers(req: Request, res: Response): Promise<void> {
-    const users = await this.userRepository.getAllUsers();
-    res.status(200).send({ data: users });
+    if (!req.query.name && !req.query.nickname) {
+      const users = await this.userRepository.getAllUsersSimplified();
+      res.status(200).send({ data: users });
+    } else {
+      const { name, nickname } = req.query;
+      const filteredUsers = await this.userRepository.filterByNameAndNickname(
+        name,
+        nickname
+      );
+      if (filteredUsers.length > 0) {
+        res.status(200).send({ data: filteredUsers });
+      } else {
+        res.status(404).send({ data: "User not found" });
+      }
+    }
   }
 
   async getUser(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     const user = await this.userRepository.getUser(id);
-    if(user){
-        res.status(200).send({ data: user });
+    if (user) {
+      res.status(200).send({ data: user });
     } else {
-        res.status(404).send({ data: "User not found" });
+      res.status(404).send({ data: "User not found" });
     }
   }
 
   async deleteUser(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     const deleted = await this.userRepository.deleteUser(id);
-    if(deleted.affected === 1){
-        res.status(200).send({ data: "User deleted" });
-    } else{
-        res.status(400).send({ data: "Cannot delete user" });
+    if (deleted.affected === 1) {
+      res.status(200).send({ data: "User deleted" });
+    } else {
+      res.status(404).send({ data: "User not found" });
     }
   }
 
-  async getUsersWithAssistance(req: Request, res: Response): Promise<void> {
-    const users = await this.userRepository.getUsersWithAssistance();
-    res.status(200).send({ data: users });
-  }
-
   routes(): express.Router {
-    this.router.post("/", (req, res) => {
+    this.router.post("/", (req: Request, res: Response) => {
       this.createUser(req, res);
     });
 
-    this.router.get("/", (req, res) => {
+    this.router.get("/", (req: Request, res: Response) => {
       this.getAllUsers(req, res);
     });
 
-    this.router.get("/assistance", (req, res) => {
-      this.getUsersWithAssistance(req, res);
-    });
-    
-    this.router.get("/:id", (req, res) => {
+    this.router.get("/:id", (req: Request, res: Response) => {
       this.getUser(req, res);
     });
 
-    this.router.delete("/:id", (req, res) => {
+    this.router.delete("/:id", (req: Request, res: Response) => {
       this.deleteUser(req, res);
     });
-
 
     return this.router;
   }

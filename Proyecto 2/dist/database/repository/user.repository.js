@@ -28,11 +28,9 @@ class UserRepository {
             return yield this.userRepository.findOne(idUser);
         });
     }
-    getAllUsers() {
+    getAllUsersSimplified() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.userRepository.createQueryBuilder("user")
-                .select(["user.id", "user.name", "user.nickname"])
-                .getMany();
+            return yield this.userRepository.find({ select: ["id", "nickname", "assistanceAmount"] });
         });
     }
     deleteUser(idUser) {
@@ -40,9 +38,17 @@ class UserRepository {
             return yield this.userRepository.delete(idUser);
         });
     }
-    getUsersWithAssistance() {
+    filterByNameAndNickname(name, nickname) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.userRepository.find();
+            if (name && nickname) {
+                return yield this.userRepository.find({ where: [{ name: name, nickname: nickname }] });
+            }
+            else if (name) {
+                return yield this.userRepository.find({ where: [{ name: name }] });
+            }
+            else {
+                return yield this.userRepository.find({ where: [{ nickname: nickname }] });
+            }
         });
     }
 }

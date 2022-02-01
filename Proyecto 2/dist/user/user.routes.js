@@ -22,7 +22,9 @@ class UserRoutes {
     }
     createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(req.body.name, req.body.nickname);
             const { name, nickname } = req.body;
+            console.log(name, nickname);
             const user = new user_entity_1.User();
             user.name = name;
             user.nickname = nickname;
@@ -32,8 +34,20 @@ class UserRoutes {
     }
     getAllUsers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const users = yield this.userRepository.getAllUsers();
-            res.status(200).send({ data: users });
+            if (!req.query.name && !req.query.nickname) {
+                const users = yield this.userRepository.getAllUsersSimplified();
+                res.status(200).send({ data: users });
+            }
+            else {
+                const { name, nickname } = req.query;
+                const filteredUsers = yield this.userRepository.filterByNameAndNickname(name, nickname);
+                if (filteredUsers.length > 0) {
+                    res.status(200).send({ data: filteredUsers });
+                }
+                else {
+                    res.status(404).send({ data: "User not found" });
+                }
+            }
         });
     }
     getUser(req, res) {
@@ -56,14 +70,8 @@ class UserRoutes {
                 res.status(200).send({ data: "User deleted" });
             }
             else {
-                res.status(400).send({ data: "Cannot delete user" });
+                res.status(404).send({ data: "User not found" });
             }
-        });
-    }
-    getUsersWithAssistance(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const users = yield this.userRepository.getUsersWithAssistance();
-            res.status(200).send({ data: users });
         });
     }
     routes() {
@@ -72,9 +80,6 @@ class UserRoutes {
         });
         this.router.get("/", (req, res) => {
             this.getAllUsers(req, res);
-        });
-        this.router.get("/assistance", (req, res) => {
-            this.getUsersWithAssistance(req, res);
         });
         this.router.get("/:id", (req, res) => {
             this.getUser(req, res);
