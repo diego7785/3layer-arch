@@ -39,7 +39,12 @@ class UserRepository {
             const user = yield this.userRepository.findOne(idUser);
             const attendances = yield this.attendanceService.getUserAttendances(idUser);
             const userWithAttendances = Object.assign(Object.assign({}, user), { attendances: attendances.data });
-            return userWithAttendances;
+            if (user) {
+                return userWithAttendances;
+            }
+            else {
+                return user;
+            }
         });
     }
     getAllUsersSimplified() {
@@ -51,6 +56,7 @@ class UserRepository {
     }
     deleteUser(idUser) {
         return __awaiter(this, void 0, void 0, function* () {
+            const deletedAttendances = yield this.attendanceService.deleteAttendancesByUser(idUser);
             return yield this.userRepository.delete(idUser);
         });
     }

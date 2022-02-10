@@ -9,4 +9,9 @@ export default class AttendanceService {
       .then((res) => res.data)
       .catch((err) => console.log(err));
   }
+
+  async deleteAttendancesByUser(userId: string) {
+    const route: string = `${config.attendance.host}:${config.attendance.port}${config.attendance.route}?idUser=${userId}`
+    return axios.delete(route).then((res) => res.data).catch((err) => console.log(err));
+  }
 }

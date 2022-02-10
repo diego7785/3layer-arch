@@ -24,6 +24,12 @@ class AttendanceService {
                 .catch((err) => console.log(err));
         });
     }
+    deleteAttendancesByUser(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const route = `${config_1.default.attendance.host}:${config_1.default.attendance.port}${config_1.default.attendance.route}?idUser=${userId}`;
+            return axios_1.default.delete(route).then((res) => res.data).catch((err) => console.log(err));
+        });
+    }
 }
 exports.default = AttendanceService;
 //# sourceMappingURL=attendance.service.js.map

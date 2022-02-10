@@ -39,9 +39,15 @@ function configRabbit(conn) {
 function synchronizeAttendances(msg) {
     const attendanceString = msg === null || msg === void 0 ? void 0 : msg.content.toString();
     const attendance = JSON.parse(attendanceString);
-    (0, user_service_1.getUserById)(attendance.idUser).then((user) => __awaiter(this, void 0, void 0, function* () {
-        const assitanceAmount = user.data.assistanceAmount + 1;
-        yield (0, user_service_1.updateAttendanceAmount)(attendance.idUser, assitanceAmount);
+    (0, user_service_1.getUserById)(attendance.attendance.idUser).then((user) => __awaiter(this, void 0, void 0, function* () {
+        if (attendance.identifier === 'add') {
+            const assitanceAmount = user.data.assistanceAmount + 1;
+            yield (0, user_service_1.updateAttendanceAmount)(attendance.attendance.idUser, assitanceAmount);
+        }
+        else if (attendance.identifier === 'delete') {
+            const assitanceAmount = user.data.assistanceAmount - 1;
+            yield (0, user_service_1.updateAttendanceAmount)(attendance.attendance.idUser, assitanceAmount);
+        }
     }));
 }
 function consume() {

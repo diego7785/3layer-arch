@@ -63,6 +63,18 @@ class AttendanceRepository {
             }
         });
     }
+    deleteAllUserAttendances(idUser) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const attendances = yield attendance_schema_1.default.deleteMany({ idUser: idUser });
+                return attendances;
+            }
+            catch (error) {
+                console.log(error);
+                throw error;
+            }
+        });
+    }
 }
 exports.default = AttendanceRepository;
 //# sourceMappingURL=attendance.repository.js.map

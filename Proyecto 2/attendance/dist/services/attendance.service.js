@@ -24,7 +24,12 @@ class AttendanceService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const attendances = yield this.attendanceRepo.getAttendanceByUser(idUser);
+                // if(attendances.length > 0){
                 return (0, response_1.buildResponse)(200, attendances);
+                // }
+                //  else {
+                //   return buildResponse(404, "No attendances found");
+                // }
             }
             catch (error) {
                 console.log(error);
@@ -47,7 +52,7 @@ class AttendanceService {
     createAttendance(attendanceInfo) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const wasPublished = yield (0, amqp_service_1.default)(attendanceInfo);
+                const wasPublished = yield (0, amqp_service_1.default)(attendanceInfo, "add");
                 if ((0, errors_1.isError)(wasPublished)) {
                     return (0, response_1.buildResponse)(500, "Error publishing attendance");
                 }
@@ -85,7 +90,13 @@ class AttendanceService {
             try {
                 if (yield this.verifyTaskDeletedBelongsToUser(idUser, attendanceId)) {
                     const attendance = yield this.attendanceRepo.deleteAttendance(attendanceId);
-                    return (0, response_1.buildResponse)(200, "Attendance deleted successfully");
+                    const wasPublished = yield (0, amqp_service_1.default)(attendance, "delete");
+                    if ((0, errors_1.isError)(wasPublished)) {
+                        return (0, response_1.buildResponse)(500, "Error publishing attendance");
+                    }
+                    else {
+                        return (0, response_1.buildResponse)(200, "Attendance deleted successfully");
+                    }
                 }
                 else {
                     return (0, response_1.buildResponse)(401, "Attendance does not belong to user");
@@ -105,6 +116,17 @@ class AttendanceService {
                     return (0, response_1.buildResponse)(404, taskCouldBeDeleted.message);
                 }
                 return yield this.performDeleteAttendance(idUser, attendanceId);
+            }
+            catch (error) {
+                console.log(error);
+                return (0, response_1.buildResponse)(500, error.message);
+            }
+        });
+    }
+    deleteAllAttendances(idUser) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.attendanceRepo.deleteAllUserAttendances(idUser);
             }
             catch (error) {
                 console.log(error);

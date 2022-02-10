@@ -26,9 +26,14 @@ async function configRabbit(conn: any) {
 function synchronizeAttendances(msg: any) {
   const attendanceString = msg?.content.toString();
   const attendance = JSON.parse(attendanceString as string);
-  getUserById(attendance.idUser).then(async (user) => {
-    const assitanceAmount = user.data.assistanceAmount + 1;
-    await updateAttendanceAmount(attendance.idUser, assitanceAmount)
+  getUserById(attendance.attendance.idUser).then(async (user) => {
+    if(attendance.identifier === 'add'){
+      const assitanceAmount = user.data.assistanceAmount + 1;
+      await updateAttendanceAmount(attendance.attendance.idUser, assitanceAmount)
+    } else if(attendance.identifier === 'delete') {
+      const assitanceAmount = user.data.assistanceAmount - 1;
+      await updateAttendanceAmount(attendance.attendance.idUser, assitanceAmount)
+    }
     });
 }
 

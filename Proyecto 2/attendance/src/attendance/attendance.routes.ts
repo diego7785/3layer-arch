@@ -32,8 +32,15 @@ export default class AttendanceRoutes {
     }
   }
 
-  verifySendDeleteParams(params: any): boolean {
+  verifySendDeleteAttendanceParams(params: any): boolean {
     if (params.attendanceId && params.idUser) {
+      return true;
+    }
+    return false;
+  }
+
+  verifySendDeleteAllUserAttendancesParams(params: any): boolean {
+    if (params.idUser) {
       return true;
     }
     return false;
@@ -41,7 +48,7 @@ export default class AttendanceRoutes {
 
   async deleteAttendance(req: Request, res: Response): Promise<void> {
     try {
-      const sendParams = this.verifySendDeleteParams(req.query);
+      const sendParams = this.verifySendDeleteAttendanceParams(req.query);
       if (sendParams) {
         const { attendanceId, idUser } = req.query;
         const attendance = await this.attendanceService.deleteAttendance(
@@ -49,8 +56,13 @@ export default class AttendanceRoutes {
           attendanceId as string
         );
         res.status(attendance.status).send({ data: attendance.message });
-      } else {
-        res.status(400).send({ error: "idUser and attendanceId are required" });
+     } else if(this.verifySendDeleteAllUserAttendancesParams(req.query)) {
+        const { idUser } = req.query;
+        const attendances = await this.attendanceService.deleteAllAttendances(idUser as string);
+        res.status(200).send({ data: attendances.message });
+      } 
+      else {
+        res.status(400).send({ error: "At least idUser and attendanceId are required" });
       }
     } catch (error: any) {
       res.status(500).send({ error: error.message });

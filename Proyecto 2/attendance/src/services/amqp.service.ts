@@ -26,11 +26,11 @@ async function configRabbit(conn: any){
   return {ch,exch,rkey}
 }
 
-async function publish(attendance: any): Promise<boolean | Error> {
+async function publish(attendance: any, identifier: string): Promise<boolean | Error> {
   try {
     const conn = await connect();
     const {ch,exch,rkey} = await configRabbit(conn);
-    await ch.publish(exch, rkey, Buffer.from(JSON.stringify(attendance)));
+    await ch.publish(exch, rkey, Buffer.from(JSON.stringify({identifier, attendance})));
     setTimeout(function () {
       ch.close();
       conn.close();

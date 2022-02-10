@@ -43,8 +43,14 @@ class AttendanceRoutes {
             }
         });
     }
-    verifySendDeleteParams(params) {
+    verifySendDeleteAttendanceParams(params) {
         if (params.attendanceId && params.idUser) {
+            return true;
+        }
+        return false;
+    }
+    verifySendDeleteAllUserAttendancesParams(params) {
+        if (params.idUser) {
             return true;
         }
         return false;
@@ -52,14 +58,19 @@ class AttendanceRoutes {
     deleteAttendance(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const sendParams = this.verifySendDeleteParams(req.query);
+                const sendParams = this.verifySendDeleteAttendanceParams(req.query);
                 if (sendParams) {
                     const { attendanceId, idUser } = req.query;
                     const attendance = yield this.attendanceService.deleteAttendance(idUser, attendanceId);
                     res.status(attendance.status).send({ data: attendance.message });
                 }
+                else if (this.verifySendDeleteAllUserAttendancesParams(req.query)) {
+                    const { idUser } = req.query;
+                    const attendances = yield this.attendanceService.deleteAllAttendances(idUser);
+                    res.status(200).send({ data: attendances.message });
+                }
                 else {
-                    res.status(400).send({ error: "idUser and attendanceId are required" });
+                    res.status(400).send({ error: "At least idUser and attendanceId are required" });
                 }
             }
             catch (error) {

@@ -40,12 +40,12 @@ function configRabbit(conn) {
         return { ch, exch, rkey };
     });
 }
-function publish(attendance) {
+function publish(attendance, identifier) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const conn = yield connect();
             const { ch, exch, rkey } = yield configRabbit(conn);
-            yield ch.publish(exch, rkey, Buffer.from(JSON.stringify(attendance)));
+            yield ch.publish(exch, rkey, Buffer.from(JSON.stringify({ identifier, attendance })));
             setTimeout(function () {
                 ch.close();
                 conn.close();

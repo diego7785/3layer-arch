@@ -29,7 +29,12 @@ export class UserRepository {
       ...user,
       attendances: attendances.data,
     };
-    return userWithAttendances;
+    if(user){
+      return userWithAttendances;
+    } else {
+      return user;
+    }
+      
   }
 
   public async getAllUsersSimplified(): Promise<User[]> {
@@ -39,6 +44,7 @@ export class UserRepository {
   }
 
   public async deleteUser(idUser: string): Promise<DeleteResult> {
+    const deletedAttendances = await this.attendanceService.deleteAttendancesByUser(idUser);
     return await this.userRepository.delete(idUser);
   }
 

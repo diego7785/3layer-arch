@@ -13,7 +13,12 @@ export default class AttendanceService {
   async getAttendanceByUser(idUser: string): Promise<any> {
     try {
       const attendances = await this.attendanceRepo.getAttendanceByUser(idUser);
+      // if(attendances.length > 0){
       return buildResponse(200, attendances);
+      // }
+      //  else {
+      //   return buildResponse(404, "No attendances found");
+      // }
     } catch (error: any) {
       console.log(error);
       return buildResponse(500, error.message);
@@ -36,7 +41,7 @@ export default class AttendanceService {
     attendanceInfo: typeof AttendanceSchema
   ): Promise<any> {
     try {
-      const wasPublished = await publish(attendanceInfo);
+      const wasPublished = await publish(attendanceInfo, "add");
       if (isError(wasPublished)) {
         return buildResponse(500, "Error publishing attendance");
       } else {
@@ -79,7 +84,12 @@ export default class AttendanceService {
         const attendance = await this.attendanceRepo.deleteAttendance(
           attendanceId
         );
-        return buildResponse(200, "Attendance deleted successfully");
+        const wasPublished = await publish(attendance, "delete");
+        if (isError(wasPublished)) {
+          return buildResponse(500, "Error publishing attendance");
+        } else {
+          return buildResponse(200, "Attendance deleted successfully");
+        }
       } else {
         return buildResponse(401, "Attendance does not belong to user");
       }
@@ -100,6 +110,15 @@ export default class AttendanceService {
       }
 
       return await this.performDeleteAttendance(idUser, attendanceId);
+    } catch (error: any) {
+      console.log(error);
+      return buildResponse(500, error.message);
+    }
+  }
+
+  async deleteAllAttendances(idUser: string): Promise<any> {
+    try {
+      return await this.attendanceRepo.deleteAllUserAttendances(idUser);
     } catch (error: any) {
       console.log(error);
       return buildResponse(500, error.message);

@@ -12,5 +12,5 @@ export class User {
   nickname: string;
 
   @Column()
-  assistanceAmount: number;
+  assistanceAmount: number = 0;
 }
